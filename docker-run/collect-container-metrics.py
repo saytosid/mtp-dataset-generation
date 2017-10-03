@@ -30,7 +30,27 @@ def create_directories(containers):
 
 def collect_container(container):
     top_output = container.top(ps_args='aux')
-    with open("data/{}/{}.csv".format(container.name, str(int(time.time()))), 'wb') as f:
+    
+    # additional_data_add to top_output
+    titles = top_output['Titles']
+    titles.append('Timestamp')
+    titles.append('OOM_Score')
+    titles.append('under_oom')
+    top_output['Titles'] = titles
+
+    timestamp = str(int(time.time()))
+    procs = top_output['Processes']
+    for row in procs:
+        row.append(timestamp)
+        pid = row[1]
+        with open('/proc/{}/oom_score'.format(pid),'r') as f:
+            oom_score = int(f.read())
+            row.append(str(oom_score))
+        with open('/sys/fs/cgroup/memory/docker/{}/memory.oom_control'.format(container.id),'r') as f:
+            under_oom = f.readlines()[1].split()[1]
+            row.append(str(under_oom))
+
+    with open("data/{}/{}.csv".format(container.name, timestamp), 'wb') as f:
         f.write(",".join(top_output['Titles']))
         f.write('\n')
         for row in top_output['Processes']:

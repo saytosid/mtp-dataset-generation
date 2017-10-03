@@ -16,7 +16,7 @@ def stop_all_containers():
 
 def run_random_load(container):
     c = random.randint(30, 50)
-    m = random.randint(1, 2)
+    m = random.randint(3, 10)
     t = random.randint(5, 15)
     container.exec_run("stress -c {} -m {} -t {}".format(c, m, t))
 
