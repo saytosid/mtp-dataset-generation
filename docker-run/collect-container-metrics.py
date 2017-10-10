@@ -69,9 +69,6 @@ def collect_container(container):
     titles.append('cpu_loadavg_simulated')
     titles.append('container_under_oom')
 
-
-
-
     top_output['Titles'] = titles
     timestamp = str(int(time.time()))
     procs = top_output['Processes']
@@ -81,7 +78,7 @@ def collect_container(container):
         process_obj = psutil.Process(pid=int(pid))
 
         # oom_score
-        with open('/proc/{}/oom_score'.format(pid),'r') as f:
+        with open('/proc/{}/oom_score'.format(pid), 'r') as f:
             oom_score = int(f.read())
             row.append(str(oom_score))
         # proc io_counters
@@ -118,7 +115,7 @@ def collect_container(container):
         row.append(cpu_time_obj.children_user)
         row.append(cpu_time_obj.children_system)
 
-        #container level metrics
+        # container level metrics
         c = CgroupstatsClient()
         cgrp_metrics_obj = c.get_cgroup_stats("/sys/fs/cgroup/cpu/docker/{}".format(container.id))
         row.append(cgrp_metrics_obj.nr_sleeping)
@@ -127,23 +124,25 @@ def collect_container(container):
         row.append(cgrp_metrics_obj.nr_uninterruptible)
         row.append(cgrp_metrics_obj.nr_iowait)
 
-        #simulated loadavg: 1 min avg of running and uninterruptible processes
+        # simulated loadavg: 1 min avg of running and uninterruptible processes
         files = sorted([item for item in os.listdir("data/{}".format(container.name)) if item.endswith(".csv")])[-59:]
         load_ctr = cgrp_metrics_obj.nr_running + cgrp_metrics_obj.nr_uninterruptible
         for file in files:
-            with open("data/{}/{}".format(container.name,file),"r") as f:
+            with open("data/{}/{}".format(container.name, file), "r") as f:
                 lines = f.readlines()
                 headers = lines[0].split(',')
                 procs_running_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_running'][0]
                 procs_uninterruptible_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_uninterruptible'][0]
                 data = lines[1].split(',')
                 load_ctr += int(data[procs_running_index]) + int(data[procs_uninterruptible_index])
-
-        loadavg = float(load_ctr)/len(files)
+        if len(files) != 0:
+            loadavg = float(load_ctr) / len(files)
+        else:
+            loadavg = 0.0
         row.append(loadavg)
-        
-        #under_oom
-        with open('/sys/fs/cgroup/memory/docker/{}/memory.oom_control'.format(container.id),'r') as f:
+
+        # under_oom
+        with open('/sys/fs/cgroup/memory/docker/{}/memory.oom_control'.format(container.id), 'r') as f:
             under_oom = f.readlines()[1].split()[1]
             row.append(str(under_oom))
 
