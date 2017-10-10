@@ -32,8 +32,6 @@ def create_directories(containers):
 
 def collect_container(container):
     top_output = container.top(ps_args='aux')
-                row.append(str(under_oom))
-
     # additional_data_add to top_output
     titles = top_output['Titles']
     titles.append('Timestamp')
@@ -57,34 +55,37 @@ def collect_container(container):
     titles.append('mem_uss')
     titles.append('mem_pss')
     titles.append('mem_swap')
+    titles.append('num_threads')
     titles.append('cpu_time_user')
     titles.append('cpu_time_system')
     titles.append('cpu_time_children_user')
     titles.append('cpu_time_children_system')
+    # Container metrics
+    titles.append('container_nr_sleeping')
+    titles.append('container_nr_running')
+    titles.append('container_nr_stopped')
+    titles.append('container_nr_uninterruptible')
+    titles.append('container_nr_iowait')
+    titles.append('cpu_loadavg_simulated')
+    titles.append('container_under_oom')
 
 
 
-
-
-
-
-    # titles.append('under_oom')
 
     top_output['Titles'] = titles
-    process_obj = psutil.Process(pid=pid)
-
-
     timestamp = str(int(time.time()))
     procs = top_output['Processes']
-    for row in procs:titles.append('mem_rss')
+    for row in procs:
         row.append(timestamp)
         pid = row[1]
+        process_obj = psutil.Process(pid=int(pid))
+
         # oom_score
         with open('/proc/{}/oom_score'.format(pid),'r') as f:
             oom_score = int(f.read())
             row.append(str(oom_score))
         # proc io_counters
-        io_counters = P.io_counters()
+        io_counters = process_obj.io_counters()
         row.append(io_counters.read_count)
         row.append(io_counters.write_count)
         row.append(io_counters.read_bytes)
@@ -92,12 +93,12 @@ def collect_container(container):
         row.append(io_counters.read_chars)
         row.append(io_counters.write_chars)
         # proc number-of-file-descriptors
-        row.append(p.num_fds())
+        row.append(process_obj.num_fds())
         # proc number-context-switches, voluntary and involuntary
-        row.append(p.num_ctx_switches().voluntary)
-        row.append(p.num_ctx_switches().involuntary)
+        row.append(process_obj.num_ctx_switches().voluntary)
+        row.append(process_obj.num_ctx_switches().involuntary)
         # proc memory params full
-        mem_obj = p.memory_full_info()
+        mem_obj = process_obj.memory_full_info()
         row.append(mem_obj.rss)
         row.append(mem_obj.vms)
         row.append(mem_obj.shared)
@@ -109,33 +110,56 @@ def collect_container(container):
         row.append(mem_obj.pss)
         row.append(mem_obj.swap)
         # proc num_threads
-        row.append(p.num_threads())
+        row.append(process_obj.num_threads())
         # proc cpu times
-        cpu_time_obj = P.cpu_times()
+        cpu_time_obj = process_obj.cpu_times()
         row.append(cpu_time_obj.user)
         row.append(cpu_time_obj.system)
         row.append(cpu_time_obj.children_user)
         row.append(cpu_time_obj.children_system)
 
+        #container level metrics
+        c = CgroupstatsClient()
+        cgrp_metrics_obj = c.get_cgroup_stats("/sys/fs/cgroup/cpu/docker/{}".format(container.id))
+        row.append(cgrp_metrics_obj.nr_sleeping)
+        row.append(cgrp_metrics_obj.nr_running)
+        row.append(cgrp_metrics_obj.nr_stopped)
+        row.append(cgrp_metrics_obj.nr_uninterruptible)
+        row.append(cgrp_metrics_obj.nr_iowait)
 
+        #simulated loadavg: 1 min avg of running and uninterruptible processes
+        files = sorted([item for item in os.listdir("data/{}".format(container.name)) if item.endswith(".csv")])[-59:]
+        load_ctr = cgrp_metrics_obj.nr_running + cgrp_metrics_obj.nr_uninterruptible
+        for file in files:
+            with open("data/{}/{}".format(container.name,file),"r") as f:
+                lines = f.readlines()
+                headers = lines[0].split(',')
+                procs_running_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_running'][0]
+                procs_uninterruptible_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_uninterruptible'][0]
+                data = lines[1].split(',')
+                load_ctr += int(data[procs_running_index]) + int(data[procs_uninterruptible_index])
 
-        # #under_oom
-        # with open('/sys/fs/cgroup/memory/docker/{}/memory.oom_control'.format(container.id),'r') as f:
-        #     under_oom = f.readlines()[1].split()[1]
-        #     row.append(str(under_oom))
+        loadavg = float(load_ctr)/len(files)
+        row.append(loadavg)
+        
+        #under_oom
+        with open('/sys/fs/cgroup/memory/docker/{}/memory.oom_control'.format(container.id),'r') as f:
+            under_oom = f.readlines()[1].split()[1]
+            row.append(str(under_oom))
+
     with open("data/{}/{}.csv".format(container.name, timestamp), 'wb') as f:
         f.write(",".join(top_output['Titles']))
         f.write('\n')
         for row in top_output['Processes']:
-            f.write(",".join(row))
+            f.write(",".join([str(item) for item in row]))
             f.write('\n')
 
 
 def start_collection_all_containers(containers):
-    while True:            row.append(str(under_oom))
-
+    while True:
         for container in containers:
             thread.start_new_thread(collect_container, (container,))
+
         time.sleep(1)
 
 
