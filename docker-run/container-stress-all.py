@@ -2,6 +2,7 @@ import docker
 import random
 import thread
 import time
+from Stress import *
 
 client = docker.from_env()
 JOB_RANDOM_PARAM = 0.7
@@ -15,11 +16,9 @@ def stop_all_containers():
 
 
 def run_random_load(container):
-    c = random.randint(30, 50)
-    m = random.randint(3, 10)
-    t = random.randint(5, 15)
-    container.exec_run("stress -c {} -m {} -t {}".format(c, m, t))
-
+    load = random.randint(0,Stress.num_loads-1)
+    intensity = random.randint(1,5)
+    container.exec_run("python run-stress.py {} {}".format(load, intensity))
 
 def start_stressing_on_all_containers(containers):
     while True:
