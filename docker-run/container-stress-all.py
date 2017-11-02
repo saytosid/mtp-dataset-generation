@@ -5,7 +5,7 @@ import time
 from Stress import *
 
 client = docker.from_env()
-JOB_RANDOM_PARAM = 0.3
+JOB_RANDOM_PARAM = 0.1
 LOOP_DELAY = 1
 
 

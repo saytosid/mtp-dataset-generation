@@ -98,7 +98,7 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
-n_samples_factor = 10000000
+n_samples_factor = 1000000
 
 class NaiveBayesClassifier(Stresser):
     def __init__(self):
@@ -107,7 +107,7 @@ class NaiveBayesClassifier(Stresser):
     def doStress(self, intensity=1):
         '''Stresses the machine'''
         X,Y,= make_classification(n_samples=intensity*n_samples_factor, 
-            n_features=100*(intensity+5), n_informative=50*(intensity+5), 
+            n_features=100*(intensity), n_informative=50*(intensity), 
             n_redundant=30, n_repeated=0, n_classes=5*intensity, n_clusters_per_class=4*intensity,
             weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, 
             shift=0.0, scale=1.0, shuffle=True, random_state=None)
@@ -121,7 +121,7 @@ class NNClassifier(Stresser):
     def doStress(self, intensity=1):
         '''Stresses the machine'''
         X,Y,= make_classification(n_samples=intensity*n_samples_factor, 
-            n_features=100*(intensity+5), n_informative=50*(intensity+5), 
+            n_features=100*(intensity), n_informative=50*(intensity), 
             n_redundant=30, n_repeated=0, n_classes=5*intensity, n_clusters_per_class=4*intensity,
             weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, 
             shift=0.0, scale=1.0, shuffle=True, random_state=None)
