@@ -18,7 +18,7 @@ def stop_all_containers():
 def run_random_load(container):
     load = random.randint(2,9)
     intensity = random.randint(1,5)
-    container.exec_run("python run-stress.py {} {}".format(load, intensity))
+    container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
 
 def start_stressing_on_all_containers(containers):
     while True:
