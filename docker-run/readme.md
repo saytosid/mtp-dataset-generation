@@ -4,7 +4,7 @@
 
 ## Usage  
 - Run as many docker containers of `saytosid/myubuntu` image as:  
-`docker run -it --name myubuntu--cpus="1" --memory="100m" saytosid/myubuntu`  
+`docker run -it -v (pwd):/working_dir --cpus="2" --memory="1000m" saytosid/myubuntu`  
 - Run `python container-stress-all.py` to begin randomly stressing containers  
 - Run `python collect-container-metrics.py` to begin collection  
 
