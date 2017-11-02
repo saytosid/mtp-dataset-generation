@@ -5,9 +5,8 @@ import time
 from Stress import *
 
 client = docker.from_env()
-JOB_RANDOM_PARAM = 0.7
-TIME_DELAY_JOBS_MIN = 3
-TIME_DELAY_JOBS_MAX = 7
+JOB_RANDOM_PARAM = 0.1
+LOOP_DELAY = 1
 
 
 def stop_all_containers():
@@ -26,8 +25,7 @@ def start_stressing_on_all_containers(containers):
             if random.random() < JOB_RANDOM_PARAM:
                 # print 'Job submitted to Container {}'.format(container.id)
                 thread.start_new_thread(run_random_load, (container,))
-
-            time.sleep(random.randint(TIME_DELAY_JOBS_MIN, TIME_DELAY_JOBS_MAX))
+            time.sleep(LOOP_DELAY)
 
 
 if __name__ == '__main__':
