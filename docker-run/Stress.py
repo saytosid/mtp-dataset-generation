@@ -121,7 +121,7 @@ class NNClassifier(Stresser):
     def doStress(self, intensity=1):
         '''Stresses the machine'''
         X,Y,= make_classification(n_samples=intensity*n_samples_factor, 
-            n_features=20+(intensity),
+            n_features=20+(intensity), n_informative=15+intensity, 
             n_repeated=0, n_classes=5*intensity, n_clusters_per_class=4*intensity,
             weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, 
             shift=0.0, scale=1.0, shuffle=True, random_state=None)
@@ -136,7 +136,7 @@ class NNRegressor(Stresser):
 
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=20+(intensity),
+        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=20+(intensity), n_informative=15+intensity,
         n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.01, shuffle=True, coef=False,
         random_state=None)
         print X.shape
