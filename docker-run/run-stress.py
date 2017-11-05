@@ -2,8 +2,8 @@ from Stress import *
 import sys
 
 if __name__ == '__main__':
-    load_id = sys.argv[1]
-    intensity = sys.argv[2]
+    load_id = int(sys.argv[1])
+    intensity = int(sys.argv[2])
     if load_id<2 or load_id>9 :
         print "load_id must be between 2-9"
     if intensity<1 or intensity>5 :
