@@ -107,7 +107,7 @@ class NaiveBayesClassifier(Stresser):
     def doStress(self, intensity=1):
         '''Stresses the machine'''
         X,Y,= make_classification(n_samples=intensity*n_samples_factor, 
-            n_features=100*(intensity), n_informative=50*(intensity), 
+            n_features=50*(intensity), n_informative=25*(intensity), 
             n_redundant=30, n_repeated=0, n_classes=5*intensity, n_clusters_per_class=4*intensity,
             weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, 
             shift=0.0, scale=1.0, shuffle=True, random_state=None)
@@ -121,13 +121,13 @@ class NNClassifier(Stresser):
     def doStress(self, intensity=1):
         '''Stresses the machine'''
         X,Y,= make_classification(n_samples=intensity*n_samples_factor, 
-            n_features=100*(intensity), n_informative=50*(intensity), 
+            n_features=50*(intensity), n_informative=25*(intensity), 
             n_redundant=30, n_repeated=0, n_classes=5*intensity, n_clusters_per_class=4*intensity,
             weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, 
             shift=0.0, scale=1.0, shuffle=True, random_state=None)
-        hidden_layer_sizes = tuple([100 for i in xrange(intensity)] )
-        clf = MLPClassifier(hidden_layer_sizes = hidden_layer_sizes,verbose=True,max_iter=100,early_stopping=True,
-            tol=0.000001)
+        hidden_layer_sizes = tuple([64 for i in xrange(intensity)] )
+        clf = MLPClassifier(hidden_layer_sizes = hidden_layer_sizes,verbose=True,max_iter=5+intensity,early_stopping=False,
+            tol=0.00001)
         clf.fit(X,Y)
 
 class NNRegressor(Stresser):
@@ -136,14 +136,14 @@ class NNRegressor(Stresser):
 
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=100*(intensity), n_informative=70*(intensity),
+        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=50*(intensity), n_informative=25*(intensity),
     n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.01, shuffle=True, coef=False,
     random_state=None)
         print X.shape
         print Y.shape
-        hidden_layer_sizes = tuple([100 for i in xrange(intensity)] )
-        reg = MLPRegressor(hidden_layer_sizes = hidden_layer_sizes,verbose=True,max_iter=100,early_stopping=True,
-            tol=0.000001)
+        hidden_layer_sizes = tuple([64 for i in xrange(intensity)] )
+        reg = MLPRegressor(hidden_layer_sizes = hidden_layer_sizes,verbose=True,max_iter=5+intensity,early_stopping=False,
+            tol=0.00001)
         reg.fit(X,Y)
 
 class KMeansCluster(Stresser):
@@ -152,11 +152,11 @@ class KMeansCluster(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=100*(intensity), n_informative=70*(intensity),
+        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=50*(intensity), n_informative=25*(intensity),
                 n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.01, shuffle=True, coef=False,
                 random_state=None)
         kmeans = KMeans(n_clusters=8*intensity, init='k-means++', n_init=10,
-                 max_iter=300, tol=1e-4, precompute_distances='auto',
+                 max_iter=5+intensity, tol=1e-4, precompute_distances='auto',
                  verbose=1, random_state=None, copy_x=True,
                  n_jobs=intensity, algorithm='auto')
         kmeans.fit(X)
