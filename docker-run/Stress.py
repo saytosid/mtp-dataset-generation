@@ -136,7 +136,7 @@ class NNRegressor(Stresser):
 
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=50+(intensity), n_informative=25+(intensity),
+        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=50+(intensity), n_informative=50,
         n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.01, shuffle=True, coef=False,
         random_state=None)
         print X.shape
@@ -152,7 +152,7 @@ class KMeansCluster(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=50+(intensity), n_informative=25+(intensity),
+        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=50+(intensity), n_informative=50,
                 n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.01, shuffle=True, coef=False,
                 random_state=None)
         kmeans = KMeans(n_clusters=8*intensity, init='k-means++', n_init=10,
