@@ -87,10 +87,10 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.neural_network import MLPClassifier, MLPRegressor
 from sklearn.cluster import KMeans
 
-import numpy
+import numpy as np
 import pandas
 from keras.models import Sequential
-from keras.layers import Dense
+from keras.layers import Dense, Activation
 from keras.wrappers.scikit_learn import KerasClassifier
 from sklearn.model_selection import cross_val_score
 from sklearn.preprocessing import LabelEncoder
@@ -98,7 +98,23 @@ from sklearn.model_selection import StratifiedKFold
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 
-n_samples_factor = 1000000
+class ModelMaker(object):
+    """docstring for ModelMaker"""
+    def __init__(self):
+        super(ModelMaker, self).__init__()
+    
+    def getKerasModel(self,num_layers,input_dim,output_dim):
+        model = Sequential()
+        model.add(Dense(32, input_dim=input_dim))
+        model.add(Activation('relu'))
+        for i in xrange(num_layers):
+            model.add(Dense(32))
+            model.add(Activation('relu'))
+        model.add(Dense(output_dim))
+
+        return model
+        
+model_maker = ModelMaker()
 
 class NaiveBayesClassifier(Stresser):
     def __init__(self):
@@ -106,11 +122,8 @@ class NaiveBayesClassifier(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_classification(n_samples=intensity*n_samples_factor, 
-            n_features=51+(intensity), n_informative=25+(intensity), 
-            n_repeated=0, n_classes=5*intensity, n_clusters_per_class=4*intensity,
-            weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, 
-            shift=0.0, scale=1.0, shuffle=True, random_state=None)
+        X = np.loadtxt(fname='clf_{}_X.gz'.format(intensity))
+        Y = np.loadtxt(fname='clf_{}_Y.gz'.format(intensity))
         gnb = GaussianNB()
         print gnb.fit(X, Y)
 
@@ -120,15 +133,19 @@ class NNClassifier(Stresser):
 
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_classification(n_samples=intensity*n_samples_factor, 
-            n_features=20+(intensity), n_informative=15+intensity, 
-            n_repeated=0, n_classes=5+intensity, n_clusters_per_class=4*intensity,
-            weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, 
-            shift=0.0, scale=1.0, shuffle=True, random_state=None)
-        hidden_layer_sizes = tuple([16 for i in xrange(intensity)] )
-        clf = MLPClassifier(hidden_layer_sizes = hidden_layer_sizes,verbose=True,max_iter=5*intensity,early_stopping=False,
-            tol=0.00001)
-        clf.fit(X,Y)
+        
+        X = np.loadtxt(fname='clf_{}_X.gz'.format(intensity))
+        Y = np.loadtxt(fname='clf_{}_Y.gz'.format(intensity))
+        nb_classes = 5
+        targets = np.array(Y).reshape(-1)
+        targets = map(int,targets)
+        one_hot_targets = np.eye(nb_classes)[targets]
+        Y = one_hot_targets
+        clf = model_maker.getKerasModel(num_layers=intensity,input_dim=X.shape[1],output_dim=Y.shape[1])
+        clf.compile(optimizer='rmsprop',
+              loss='categorical_crossentropy',
+              metrics=['accuracy'])
+        clf.fit(X,Y,epochs = intensity+20)
 
 class NNRegressor(Stresser):
     def __init__(self):
@@ -136,15 +153,12 @@ class NNRegressor(Stresser):
 
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=20+(intensity), n_informative=15+intensity,
-        n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.01, shuffle=True, coef=False,
-        random_state=None)
-        print X.shape
-        print Y.shape
-        hidden_layer_sizes = tuple([16 for i in xrange(intensity)] )
-        reg = MLPRegressor(hidden_layer_sizes = hidden_layer_sizes,verbose=True,max_iter=5*intensity,early_stopping=False,
-            tol=0.00001)
-        reg.fit(X,Y)
+        X = np.loadtxt(fname='reg_{}_X.gz'.format(intensity))
+        Y = np.loadtxt(fname='reg_{}_Y.gz'.format(intensity))
+        reg = model_maker.getKerasModel(num_layers=intensity,input_dim=X.shape[1],output_dim=1)
+        reg.compile(optimizer='rmsprop',
+              loss='mse')
+        reg.fit(X,Y,epochs = intensity + 20)
 
 class KMeansCluster(Stresser):
     def __init__(self):
@@ -152,9 +166,9 @@ class KMeansCluster(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X,Y,= make_regression(n_samples=intensity*n_samples_factor, n_features=51+(intensity), n_informative=50,
-                n_targets=1, bias=0.0, effective_rank=None, tail_strength=0.5, noise=0.01, shuffle=True, coef=False,
-                random_state=None)
+        X = np.loadtxt(fname='reg_{}_X.gz'.format(intensity))
+        Y = np.loadtxt(fname='reg_{}_Y.gz'.format(intensity))
+
         kmeans = KMeans(n_clusters=8*intensity, init='k-means++', n_init=10,
                  max_iter=5*intensity, tol=1e-4, precompute_distances='auto',
                  verbose=1, random_state=None, copy_x=True,
@@ -165,13 +179,7 @@ class KMeansCluster(Stresser):
 loads = [CreateFile(), WordCount(), Sort(), Grep(), Concat(), NaiveBayesClassifier(), NNClassifier(), NNRegressor(), KMeans()]
 num_loads = len(loads)
 if __name__ == '__main__':
-    load = int(sys.argv[1])
-    intensity = int(sys.argv[2])
-    if load >= num_loads or intensity > 5:
-        print "Error in input"
-        print "Usage, python Stress.py <load_num> <intensity>"
-    else:
-        loads[load].doStress(intensity)
-
+    loads[6].doStress(1)
+    
 
 
