@@ -125,7 +125,7 @@ class NNClassifier(Stresser):
             n_redundant=5*intensity, n_repeated=0, n_classes=5*intensity, n_clusters_per_class=4*intensity,
             weights=None, flip_y=0.01, class_sep=1.0, hypercube=True, 
             shift=0.0, scale=1.0, shuffle=True, random_state=None)
-        hidden_layer_sizes = tuple([64 for i in xrange(intensity)] )
+        hidden_layer_sizes = tuple([16 for i in xrange(intensity+1)] )
         clf = MLPClassifier(hidden_layer_sizes = hidden_layer_sizes,verbose=True,max_iter=5+intensity,early_stopping=False,
             tol=0.00001)
         clf.fit(X,Y)
@@ -141,7 +141,7 @@ class NNRegressor(Stresser):
     random_state=None)
         print X.shape
         print Y.shape
-        hidden_layer_sizes = tuple([64 for i in xrange(intensity)] )
+        hidden_layer_sizes = tuple([16 for i in xrange(intensity+1)] )
         reg = MLPRegressor(hidden_layer_sizes = hidden_layer_sizes,verbose=True,max_iter=5+intensity,early_stopping=False,
             tol=0.00001)
         reg.fit(X,Y)
