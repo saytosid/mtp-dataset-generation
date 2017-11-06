@@ -145,7 +145,7 @@ class NNClassifier(Stresser):
         clf.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
-        clf.fit(X,Y,epochs = intensity+20)
+        clf.fit(X,Y,epochs = intensity+20, verbose=1)
 
 class NNRegressor(Stresser):
     def __init__(self):
@@ -158,7 +158,7 @@ class NNRegressor(Stresser):
         reg = model_maker.getKerasModel(num_layers=intensity,input_dim=X.shape[1],output_dim=1)
         reg.compile(optimizer='rmsprop',
               loss='mse')
-        reg.fit(X,Y,epochs = intensity + 20)
+        reg.fit(X,Y,epochs = intensity + 20, verbose=1)
 
 class KMeansCluster(Stresser):
     def __init__(self):
