@@ -2,23 +2,55 @@
 TBI - It is not made yet, to be implemented
 
 '''
+from __future__ import division
+import pandas as pd
+import os
+LOAD_AVG_INTERVAL = 1
+def process_file(dir,fname,df):
+    files = sorted(os.listdir(dir))
+    f_idx = [i for i in range(len(files)) if files[i] == fname][0]
+    if f_idx > LOAD_AVG_INTERVAL:
+        files = files[f_idx-LOAD_AVG_INTERVAL:f_idx+1]
+    else:
+        files = files[0:f_idx+1]
+    # Now files that are needed for loadavg calculation are in files
+    load_ctr = 0.0
+    for filename in files:
+        with open("{}/{}".format(dir, fname), "r") as f:
+            lines = f.readlines()
+            headers = lines[0].split(',')
+            procs_running_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_running'][0]
+            procs_uninterruptible_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_uninterruptible'][0]
+            data = lines[-1].split(',')
+            print float(data[procs_running_index]) , float(data[procs_uninterruptible_index])
+            load_ctr += float(data[procs_running_index]) + float(data[procs_uninterruptible_index])
+
+    if len(files) != 0:
+        loadavg = load_ctr/len(files)
+        print loadavg
+    else:
+        loadavg = 0.0
+    # print loadavg
+    df['simulated_load_avg'] = loadavg
+    return df 
+
+if __name__ == '__main__':
+    containers = [i for i in os.listdir('data') if not i.endswith('.csv')]
+    containers = [i for i in containers if i.startswith('cont')]
+    for cont_name in containers:
+        print 'Processing files for container - {}'.format(cont_name)
+        DF = None
+        firsttime = True
+        files = sorted(os.listdir('data/{}'.format(cont_name)))
+        for filename in files:
+            filepath = 'data/{}/{}'.format(cont_name,filename)
+            df = pd.read_csv(filepath)
+            df = process_file(dir='data/{}'.format(cont_name),fname=filename,df=df)
+            if firsttime:
+                firsttime = False
+                DF = df    
+            DF = DF.append(df)
+        DF.to_csv('data/{}.csv'.format(cont_name))
 
 
-titles.append('cpu_loadavg_simulated')
-# simulated loadavg: 1 min avg of running and uninterruptible processes
 
-files = sorted([item for item in os.listdir("data/{}".format(container.name)) if item.endswith(".csv")])[-59:]
-load_ctr = cgrp_metrics_obj.nr_running + cgrp_metrics_obj.nr_uninterruptible
-for file in files:
-    with open("data/{}/{}".format(container.name, file), "r") as f:
-        lines = f.readlines()
-        headers = lines[0].split(',')
-        procs_running_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_running'][0]
-        procs_uninterruptible_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_uninterruptible'][0]
-        data = lines[1].split(',')
-        load_ctr += int(data[procs_running_index]) + int(data[procs_uninterruptible_index])
-if len(files) != 0:
-    loadavg = float(load_ctr) / len(files)
-else:
-    loadavg = 0.0
-row.append(loadavg)
