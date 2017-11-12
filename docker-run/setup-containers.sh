@@ -11,10 +11,6 @@ docker stop cont4
 docker rm cont4
 
 # Kill all tmux sessions
-tmux kill-session -t cont1
-tmux kill-session -t cont2
-tmux kill-session -t cont3
-tmux kill-session -t cont4
 tmux kill-session -t stress
 tmux kill-session -t collect
 
