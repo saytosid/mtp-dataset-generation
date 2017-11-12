@@ -9,23 +9,27 @@ docker stop cont3
 docker rm cont3
 docker stop cont4
 docker rm cont4
+echo "All containers killed"
 
 # Kill all tmux sessions
 tmux kill-session -t stress
 tmux kill-session -t collect
-
+echo "Prev tmux sessions killed"
 
 # Run new containers in tmux sessions
 tmux new-session -d -s cont1 'docker run -it -v (pwd):/working_dir --cpus="2" --memory="1000m" --name=cont1 saytosid/myubuntu'
 tmux new-session -d -s cont2 'docker run -it -v (pwd):/working_dir --cpus="2" --memory="1000m" --name=cont2 saytosid/myubuntu'
 tmux new-session -d -s cont3 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="2000m" --name=cont3 saytosid/myubuntu'
 tmux new-session -d -s cont4 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="2000m" --name=cont4 saytosid/myubuntu'
+echo "Containers started in tmux sessions"
 
 # start data collection
 tmux new-session -d -s collect 'source virtenv/sid/bin/activate.fish'
 tmux send -t collect 'python collect-container-metrics.py'
+echo "Data collection started"
 
 # start stresses
 tmux new-session -d -s stress 'source virtenv/sid/bin/activate.fish'
 tmux send -t stress 'python container-stress-all.py'
+echoo "Stress started"
 
