@@ -36,7 +36,7 @@ def run_random_load(container):
 def start_stressing_on_all_containers(containers):
     while True:
         for container in containers:
-            JOB_RANDOM_PARAM = random.random()*JOB_RANDOM_PARAM_MAX
+            JOB_RANDOM_PARAM = JOB_RANDOM_PARAM_MAX
             if random.random() < JOB_RANDOM_PARAM:
                 # print 'Job submitted to Container {}'.format(container.id)
                 thread.start_new_thread(run_random_load, (container,))
