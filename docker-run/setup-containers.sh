@@ -25,13 +25,13 @@ echo "Containers started in tmux sessions"
 
 # start data collection
 tmux new-session -d -s collect 'fish'
-tmux send -t collect 'source virtenv/sid/bin/activate.fish'
-tmux send -t collect 'python collect-container-metrics.py'
+tmux send -t collect 'source virtenv/sid/bin/activate.fish' ENTER
+tmux send -t collect 'python collect-container-metrics.py' ENTER
 echo "Data collection started"
 
 # start stresses
 tmux new-session -d -s stress 'fish'
-tmux send -t stress 'source virtenv/sid/bin/activate.fish'
-tmux send -t stress 'python container-stress-all.py'
+tmux send -t stress 'source virtenv/sid/bin/activate.fish' ENTER
+tmux send -t stress 'python container-stress-all.py' ENTER
 echo "Stress started"
 
