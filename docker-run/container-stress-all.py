@@ -17,19 +17,19 @@ def stop_all_containers():
 
 
 def run_random_load(container):
-    if container in CLUSTER_1:
+    if container.name in CLUSTER_1:
         load = random.randint(2,5)
         intensity = random.randint(1,5)
         num_jobs_in_container = len(container.top())
-        JOB_RANDOM_PARAM = random.random()/float(num_jobs_in_container) + 0.01
+        JOB_RANDOM_PARAM = random.random()/float(num_jobs_in_container) + 0.1
         if random.random() < JOB_RANDOM_PARAM:
             container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
 
-    if container in CLUSTER_2:
+    if container.name in CLUSTER_2:
         load = random.randint(5,9)
         intensity = random.randint(1,5)
         num_jobs_in_container = len(container.top())
-        JOB_RANDOM_PARAM = random.random()/float(num_jobs_in_container) + 0.01
+        JOB_RANDOM_PARAM = random.random()/float(num_jobs_in_container) + 0.05
         if random.random() < JOB_RANDOM_PARAM:
             container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
 
@@ -52,15 +52,15 @@ if __name__ == '__main__':
     containers = client.containers.list()
     containers.sort(container_comparator)
     print containers
-    CLUSTER_1 = containers[0:len(containers)/2+1]
-    CLUSTER_2 = containers[len(containers)/2+1:]
+    CLUSTER_1 = [c.name for c in containers[0:len(containers)/2]]
+    CLUSTER_2 = [c.name for c in containers[len(containers)/2:]]
     os.system('rm data/container_cluster_info')
     for cont in CLUSTER_1:
         with open('data/container_cluster_info', 'ab') as f:
-            f.write('CLUSTER_1 -> {}\n'.format(cont.name))
+            f.write('CLUSTER_1 -> {}\n'.format(cont))
     for cont in CLUSTER_2:
         with open('data/container_cluster_info', 'ab') as f:
-            f.write('CLUSTER_2 -> {}\n'.format(cont.name))
+            f.write('CLUSTER_2 -> {}\n'.format(cont))
     start_stressing_on_all_containers(containers)
 
     # stop_all_containers()
