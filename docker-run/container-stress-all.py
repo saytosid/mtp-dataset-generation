@@ -8,7 +8,8 @@ client = docker.from_env()
 JOB_RANDOM_PARAM_MAX = 0.15
 JOB_RANDOM_PARAM = 0.025
 LOOP_DELAY = 1
-
+CLUSTER_1 = []
+CLUSTER_2 = []
 
 def stop_all_containers():
     for container in client.containers.list():
@@ -16,9 +17,18 @@ def stop_all_containers():
 
 
 def run_random_load(container):
-    load = random.randint(2,9)
-    intensity = random.randint(1,5)
-    container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
+    if container in CLUSTER_1:
+        load = random.randint(2,5)
+        intensity = random.randint(1,5)
+        container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
+
+    if container in CLUSTER_2:
+        load = random.randint(5,9)
+        intensity = random.randint(1,5)
+        num_jobs_in_container = len(container.top())
+        JOB_RANDOM_PARAM = random.random()/float(num_jobs_in_container)
+            if random.random() < JOB_RANDOM_PARAM:
+                container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
 
 def start_stressing_on_all_containers(containers):
     while True:
@@ -33,6 +43,8 @@ def start_stressing_on_all_containers(containers):
 if __name__ == '__main__':
     containers = client.containers.list()
     print containers
+    CLUSTER_1 = containers[0:len(containers)/2]
+    CLUSTER_2 = containers[len(containers)/2:]
     start_stressing_on_all_containers(containers)
 
     # stop_all_containers()
