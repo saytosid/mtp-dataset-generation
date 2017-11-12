@@ -1,5 +1,4 @@
 '''Merges individual data files into one huge file and deletes rest
-TBI - It is not made yet, to be implemented
 
 '''
 from __future__ import division
