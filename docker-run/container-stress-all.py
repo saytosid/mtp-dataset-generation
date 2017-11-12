@@ -31,6 +31,8 @@ def run_random_load(container):
         num_jobs_in_container = len(container.top()['Processes'])
         JOB_RANDOM_PARAM = (random.random())/float(num_jobs_in_container)
         if random.random() < JOB_RANDOM_PARAM:
+            if load==7:
+                print 'keras load given {},{}'.format(load,intensity)
             container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
 
 def start_stressing_on_all_containers(containers):
