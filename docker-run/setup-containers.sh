@@ -21,9 +21,9 @@ tmux new-session -d -s cont4 'docker run -it -v (pwd):/working_dir --cpus="4" --
 
 # start data collection
 tmux new-session -d -s collect 'source virtenv/sid/bin/activate.fish'
-tmux -s collect 'python collect-container-metrics.py'
+tmux send -t collect 'python collect-container-metrics.py'
 
 # start stresses
 tmux new-session -d -s stress 'source virtenv/sid/bin/activate.fish'
-tmux -s stress 'python container-stress-all.py'
+tmux send -t stress 'python container-stress-all.py'
 
