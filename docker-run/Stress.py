@@ -122,8 +122,8 @@ class NaiveBayesClassifier(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X = np.loadtxt(fname='clf_{}_X.gz'.format(intensity))
-        Y = np.loadtxt(fname='clf_{}_Y.gz'.format(intensity))
+        X = np.loadtxt(fname='working_dir/clf_{}_X.gz'.format(intensity))
+        Y = np.loadtxt(fname='working_dir/clf_{}_Y.gz'.format(intensity))
         gnb = GaussianNB()
         print gnb.fit(X, Y)
 
@@ -134,8 +134,8 @@ class NNClassifier(Stresser):
     def doStress(self, intensity=1):
         '''Stresses the machine'''
         
-        X = np.loadtxt(fname='clf_{}_X.gz'.format(intensity))
-        Y = np.loadtxt(fname='clf_{}_Y.gz'.format(intensity))
+        X = np.loadtxt(fname='working_dir/clf_{}_X.gz'.format(intensity))
+        Y = np.loadtxt(fname='working_dir/clf_{}_Y.gz'.format(intensity))
         nb_classes = 5
         targets = np.array(Y).reshape(-1)
         targets = map(int,targets)
@@ -153,8 +153,8 @@ class NNRegressor(Stresser):
 
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X = np.loadtxt(fname='reg_{}_X.gz'.format(intensity))
-        Y = np.loadtxt(fname='reg_{}_Y.gz'.format(intensity))
+        X = np.loadtxt(fname='working_dir/reg_{}_X.gz'.format(intensity))
+        Y = np.loadtxt(fname='working_dir/reg_{}_Y.gz'.format(intensity))
         reg = model_maker.getKerasModel(num_layers=intensity,input_dim=X.shape[1],output_dim=1)
         reg.compile(optimizer='rmsprop',
               loss='mse')
@@ -166,8 +166,8 @@ class KMeansCluster(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        X = np.loadtxt(fname='reg_{}_X.gz'.format(intensity))
-        Y = np.loadtxt(fname='reg_{}_Y.gz'.format(intensity))
+        X = np.loadtxt(fname='working_dir/reg_{}_X.gz'.format(intensity))
+        Y = np.loadtxt(fname='working_dir/reg_{}_Y.gz'.format(intensity))
 
         kmeans = KMeans(n_clusters=8*intensity, init='k-means++', n_init=10,
                  max_iter=5*intensity, tol=1e-4, precompute_distances='auto',
