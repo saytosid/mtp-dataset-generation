@@ -11,6 +11,10 @@ docker stop cont4
 docker rm cont4
 echo "All containers killed"
 
+# Remove prev data
+rm -r data
+echo "prev data removed"
+
 # Kill all tmux sessions
 tmux kill-session -t stress
 tmux kill-session -t collect
