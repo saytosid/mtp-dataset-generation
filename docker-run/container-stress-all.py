@@ -52,8 +52,8 @@ if __name__ == '__main__':
     containers = client.containers.list()
     containers.sort(container_comparator)
     print containers
-    CLUSTER_1 = containers[0:len(containers)/2]
-    CLUSTER_2 = containers[len(containers)/2:]
+    CLUSTER_1 = containers[0:len(containers)/2+1]
+    CLUSTER_2 = containers[len(containers)/2+1:]
     os.system('rm data/container_cluster_info')
     for cont in CLUSTER_1:
         with open('data/container_cluster_info', 'ab') as f:
