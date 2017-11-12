@@ -20,9 +20,10 @@ def process_file(dir,fname,df):
             headers = lines[0].split(',')
             procs_running_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_running'][0]
             procs_uninterruptible_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_uninterruptible'][0]
+            procs_sleeping_index = [i for i in range(len(headers)) if headers[i] == 'container_nr_sleeping'][0]
             data = lines[-1].split(',')
-            print float(data[procs_running_index]) , float(data[procs_uninterruptible_index])
-            load_ctr += float(data[procs_running_index]) + float(data[procs_uninterruptible_index])
+            print float(data[procs_running_index]) , float(data[procs_uninterruptible_index]), float(data[procs_sleeping_index])
+            load_ctr += float(data[procs_running_index]) + float(data[procs_uninterruptible_index]) + float(data[procs_sleeping_index])
 
     if len(files) != 0:
         loadavg = load_ctr/len(files)
