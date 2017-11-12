@@ -20,13 +20,16 @@ def run_random_load(container):
     if container in CLUSTER_1:
         load = random.randint(2,5)
         intensity = random.randint(1,5)
-        container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
+        num_jobs_in_container = len(container.top())
+        JOB_RANDOM_PARAM = random.random()/float(num_jobs_in_container) + 0.01
+        if random.random() < JOB_RANDOM_PARAM:
+            container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
 
     if container in CLUSTER_2:
         load = random.randint(5,9)
         intensity = random.randint(1,5)
         num_jobs_in_container = len(container.top())
-        JOB_RANDOM_PARAM = random.random()/float(num_jobs_in_container)
+        JOB_RANDOM_PARAM = random.random()/float(num_jobs_in_container) + 0.01
         if random.random() < JOB_RANDOM_PARAM:
             container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
 
