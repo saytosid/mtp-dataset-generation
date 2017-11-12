@@ -44,7 +44,7 @@ def start_stressing_on_all_containers(containers):
 
 
 def container_comparator(x,y):
-    return x.name < y.name
+    return x.name > y.name
 
 if __name__ == '__main__':
     containers = client.containers.list()
