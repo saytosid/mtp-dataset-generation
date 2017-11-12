@@ -11,7 +11,13 @@ docker stop cont4
 docker rm cont4
 
 # Kill all tmux sessions
-tmux kill-server
+tmux kill-session -t cont1
+tmux kill-session -t cont2
+tmux kill-session -t cont3
+tmux kill-session -t cont4
+tmux kill-session -t stress
+tmux kill-session -t collect
+
 
 # Run new containers in tmux sessions
 tmux new-session -d -s cont1 'docker run -it -v (pwd):/working_dir --cpus="2" --memory="1000m" --name=cont1 saytosid/myubuntu'
