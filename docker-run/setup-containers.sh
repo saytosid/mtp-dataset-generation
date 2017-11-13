@@ -21,10 +21,10 @@ tmux kill-session -t collect
 echo "Prev tmux sessions killed"
 
 # Run new containers in tmux sessions
-tmux new-session -d -s cont1 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="4000m" --name=cont1 saytosid/myubuntu'
-tmux new-session -d -s cont2 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="4000m" --name=cont2 saytosid/myubuntu'
-tmux new-session -d -s cont3 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="8000m" --name=cont3 saytosid/myubuntu'
-tmux new-session -d -s cont4 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="8000m" --name=cont4 saytosid/myubuntu'
+tmux new-session -d -s cont1 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="1500m" --name=cont1 saytosid/myubuntu'
+tmux new-session -d -s cont2 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="1500m" --name=cont2 saytosid/myubuntu'
+tmux new-session -d -s cont3 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="2000m" --name=cont3 saytosid/myubuntu'
+tmux new-session -d -s cont4 'docker run -it -v (pwd):/working_dir --cpus="4" --memory="2000m" --name=cont4 saytosid/myubuntu'
 sleep 2
 echo "Containers started in tmux sessions"
 
