@@ -39,6 +39,7 @@ def process_file(dir,fname,df):
 if __name__ == '__main__':
     containers = [i for i in os.listdir('data') if not i.endswith('.csv')]
     containers = [i for i in containers if re.match('^cont\d{1,2}$',i) != None]
+    containers = ['cont3']
     for cont_name in containers:
         print 'Processing files for container - {}'.format(cont_name)
         DF = None
