@@ -1,0 +1,65 @@
+<html>
+<head>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', {'packages':['gantt']});
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+
+      var data = new google.visualization.DataTable();
+      data.addColumn('string', 'Task ID');
+      data.addColumn('string', 'Task Name');
+      data.addColumn('string', 'Resource');
+      data.addColumn('date', 'Start Date');
+      data.addColumn('date', 'End Date');
+      data.addColumn('number', 'Duration');
+      data.addColumn('number', 'Percent Complete');
+      data.addColumn('string', 'Dependencies');
+
+      data.addRows([
+        ['PyStress', 'PyStress Development', 'pystress',
+         new Date(2017, 7, 22), new Date(2017, 8, 15), null, 100, null],
+        ['Job Scheduler', 'Job Scheduler', 'js',
+         new Date(2017, 8, 1), new Date(2017, 9, 20), null, 100, null],
+        ['Metric Collector', 'Metric Collector', 'mc',
+         new Date(2017, 8, 1), new Date(2017, 9, 20), null, 100, null],
+        ['Clusterspecs', 'Cluster Specs Experiments', 'cs',
+         new Date(2017, 8, 1), new Date(2017, 9, 20), null, 100, null],
+        ['Prediction Model', 'Prediction Model', 'models',
+         new Date(2017, 9, 10), new Date(2017, 11, 20), null, 100, null],
+        ['Anomaly Detection', 'Anomaly Detection', 'Anomaly',
+         new Date(2018, 1, 5), new Date(2018, 2, 10), null, 0, null],
+        ['Job Identification', 'Job Identification', 'job',  
+         new Date(2018, 2, 10), new Date(2018, 3, 30), null, 0, null],
+        ['DDoS Data Generation', 'DDoS Data Generation', 'ddos',
+         new Date(2018, 2, 30), new Date(2018, 4, 15), null, 0, null],
+        ['DDoS Prediction', 'DDoS Prediction', 'ddosp',
+         new Date(2018, 4, 1), new Date(2018, 5, 5), null, 0, null],
+
+      ]);
+
+      var options = {
+        height: 600,
+        width: 1000,
+        gantt: {
+          trackHeight: 50,
+          barHeight: 45,
+          labelStyle: {
+            fontName: 'Roboto',
+            fontSize: 14,
+            color: '#ffffff'
+          }
+        }
+      };
+
+      var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+  </script>
+</head>
+<body>
+  <div id="chart_div"></div>
+</body>
+</html>
