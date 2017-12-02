@@ -49,7 +49,6 @@ class WordCount(Stresser):
         '''Stresses the machine'''
         filename= 'intensity_{}'.format(intensity)
         print os.system('wc {}'.format(filename))
-        os.system("rm {}".format(filename))
 
 class Sort(Stresser):
     def __init__(self):
@@ -59,7 +58,6 @@ class Sort(Stresser):
         '''Stresses the machine'''
         filename= 'intensity_{}'.format(intensity)
         print os.system('sort {}'.format(filename))
-        os.system("rm {}".format(filename))
 
 class Grep(Stresser):
     def __init__(self):
@@ -69,7 +67,6 @@ class Grep(Stresser):
         '''Stresses the machine'''
         filename= 'intensity_{}'.format(intensity)
         print os.system('cat {} | grep 1'.format(filename))
-        os.system("rm {}".format(filename))
 
 class Concat(Stresser):
     def __init__(self):
@@ -79,7 +76,6 @@ class Concat(Stresser):
         '''Stresses the machine'''
         filename= 'intensity_{}'.format(intensity)
         print os.system('cat {}'.format(filename))
-        os.system("rm {}".format(filename))
 #################################################################
 
 ############## ML Loads #########################################
