@@ -24,10 +24,11 @@ class CreateFile(Stresser):
     def __init__(self):
         super(CreateFile, self).__init__()
 
-    def doStress(self, intensity=1):
-        filename = str(random.randint(0, 1024))
+    def doStress(self, intensity=1,filename='na'):
+        if filename=='na':
+            filename = str(random.randint(0, 1024))
         with open(filename, 'wb') as f:
-            size_ = random.randint(intensity * 1000000,intensity * 10000000)
+            size_ = random.randint(intensity * 10000000,intensity * 100000000)
             for i in xrange(size_):
                 if random.random() < 0.4:
                     f.write(' ')  # Sometimes add a space
@@ -46,7 +47,7 @@ class WordCount(Stresser):
 
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        filename= CreateFile().doStress(intensity+1)
+        filename= 'intensity_{}'.format(intensity)
         print os.system('wc {}'.format(filename))
         os.system("rm {}".format(filename))
 
@@ -56,7 +57,7 @@ class Sort(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        filename= CreateFile().doStress(intensity+1)
+        filename= 'intensity_{}'.format(intensity)
         print os.system('sort {}'.format(filename))
         os.system("rm {}".format(filename))
 
@@ -66,7 +67,7 @@ class Grep(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        filename= CreateFile().doStress(intensity+1)
+        filename= 'intensity_{}'.format(intensity)
         print os.system('cat {} | grep 1'.format(filename))
         os.system("rm {}".format(filename))
 
@@ -76,7 +77,7 @@ class Concat(Stresser):
         
     def doStress(self, intensity=1):
         '''Stresses the machine'''
-        filename= CreateFile().doStress(intensity+1)
+        filename= 'intensity_{}'.format(intensity)
         print os.system('cat {}'.format(filename))
         os.system("rm {}".format(filename))
 #################################################################
