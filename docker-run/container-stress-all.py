@@ -5,7 +5,9 @@ import time
 from Stress import *
 
 client = docker.from_env()
-JOB_RANDOM_PARAM_MAX = 0.45
+JOB_RANDOM_PARAM_MICRO = 0.4
+JOB_RANDOM_PARAM_ML = 0.1
+JOB_RANDOM_PARAM_MAX = 0.1
 JOB_RANDOM_PARAM = 0.025
 LOOP_DELAY = 1
 CLUSTER_1 = []
@@ -21,7 +23,7 @@ def run_random_load(container):
         load = random.randint(2,5)
         intensity = random.randint(1,5)
         num_jobs_in_container = len(container.top()['Processes'])
-        JOB_RANDOM_PARAM = (JOB_RANDOM_PARAM_MAX+10)/float(num_jobs_in_container)
+        JOB_RANDOM_PARAM = (JOB_RANDOM_PARAM_MICRO+1)/float(num_jobs_in_container)
         if random.random() < JOB_RANDOM_PARAM:
             container.exec_run("python working_dir/run-stress.py {} {}".format(load, intensity))
 
@@ -29,7 +31,7 @@ def run_random_load(container):
         load = random.randint(5,9)
         intensity = random.randint(1,5)
         num_jobs_in_container = len(container.top()['Processes'])
-        JOB_RANDOM_PARAM = JOB_RANDOM_PARAM_MAX/float(num_jobs_in_container)
+        JOB_RANDOM_PARAM = (JOB_RANDOM_PARAM_ML)/float(num_jobs_in_container)
         if random.random() < JOB_RANDOM_PARAM:
             if load==7:
                 print 'keras load given {},{}'.format(load,intensity)
