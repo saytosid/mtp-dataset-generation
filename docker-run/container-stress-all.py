@@ -5,7 +5,7 @@ import time
 from Stress import *
 
 client = docker.from_env()
-JOB_RANDOM_PARAM_MICRO = 0.4
+JOB_RANDOM_PARAM_MICRO = 5.0
 JOB_RANDOM_PARAM_ML = 0.1
 JOB_RANDOM_PARAM_MAX = 0.1
 JOB_RANDOM_PARAM = 0.025
