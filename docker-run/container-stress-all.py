@@ -7,8 +7,7 @@ from Stress import *
 client = docker.from_env()
 JOB_RANDOM_PARAM_MICRO = 5.0
 JOB_RANDOM_PARAM_ML = 0.005
-JOB_RANDOM_PARAM_MAX = 0.1
-JOB_RANDOM_PARAM = 0.5
+JOB_RANDOM_PARAM_MAX = 0.5
 LOOP_DELAY = 1
 CLUSTER_1 = []
 CLUSTER_2 = []
